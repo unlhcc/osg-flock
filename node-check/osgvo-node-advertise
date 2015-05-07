@@ -179,16 +179,16 @@ rm -f csh.test
 ##################
 # htpc core count
 
-info "Counting cores for HTPC jobs"
-group=`awk '/^GLIDECLIENT_Group /{print $2}' $glidein_config`
-if (echo $group | grep -i htpc) >/dev/null 2>&1; then
-    resource_name=`awk '/^GLIDEIN_ResourceName /{print $2}' $glidein_config`
-    core_count=`cat /proc/cpuinfo | grep ^processor | wc -l`
-    if [ "x$resource_name" = "xTusker" ]; then
-        core_count="8"
-    fi
-    advertise HTPC_CORES "$core_count" "I"
-fi
+#info "Counting cores for HTPC jobs"
+#group=`awk '/^GLIDECLIENT_Group /{print $2}' $glidein_config`
+#if (echo $group | grep -i htpc) >/dev/null 2>&1; then
+#    resource_name=`awk '/^GLIDEIN_ResourceName /{print $2}' $glidein_config`
+#    core_count=`cat /proc/cpuinfo | grep ^processor | wc -l`
+#    if [ "x$resource_name" = "xTusker" ]; then
+#        core_count="8"
+#    fi
+#    advertise HTPC_CORES "$core_count" "I"
+#fi
 
 
 ##################
