@@ -115,6 +115,17 @@ advertise OSGVO_PILOT_DF "$OSGVO_PILOT_DF" "I"
 
 
 ##################
+# GPUs
+# if we are part of the GPU group
+
+if [ "$glidein_config" != "NONE" ]; then
+    group=`grep '^GLIDECLIENT_Group ' $glidein_config | awk '{print $2}'`
+    if [ "x$group" = "xgpu" ]; then
+        advertise "GPUs" "1" "I"
+    fi
+fi
+
+##################
 # squid
 
 HAS_SQUID="False"
@@ -212,11 +223,11 @@ for FS in \
         if [ "x$REV_VAL" != "x" ]; then
             # make sure it is an integer
             if [ "$REV_VAL" -eq "$REV_VAL" ] 2>/dev/null; then
+                advertise $FS_ATTR "$RESULT" "C"
                 advertise $REV_ATTR "$REV_VAL" "I"
             fi
         fi
     fi
-    advertise $FS_ATTR "$RESULT" "C"
 done
 
 # update timestamp?
@@ -228,6 +239,15 @@ if [ "x$TS_VAL" != "x" ]; then
         advertise $TS_ATTR "$TS_VAL" "I"
     fi
 fi
+
+# modules
+RESULT="False"
+if [ -e /cvmfs/oasis.opensciencegrid.org/osg/modules/lmod/current/init/bash ]; then
+    if (. /cvmfs/oasis.opensciencegrid.org/osg/modules/lmod/current/init/bash && module avail) >/dev/null 2>&1; then
+        RESULT="True"
+    fi
+fi
+advertise HAS_MODULES "$RESULT" "C"
 
 info "Checking for PALMS availability..."
 RESULT="False"
@@ -267,6 +287,8 @@ for LIB in \
     /usr/lib64/libgslcblas.so.0 \
     /usr/lib64/libgsl.so.0 \
     /usr/lib64/libstdc++.so.6 \
+    /usr/lib64/libgtk-x11-2.0.so.0 \
+    /usr/lib64/libXt.so.6 \
 ; do
     ATTR="HAS_FILE"`echo $LIB | sed 's/[\.\/\+\-]/_/g'`
     HAS_LIB="False"
